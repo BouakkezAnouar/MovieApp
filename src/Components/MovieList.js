@@ -15,9 +15,15 @@ const MovieList = ({
   handleMovieDesc,
   handleMovieName,
   handleMovieYear,
+  handleBoutonPlus,
+  isValidDescription,
+  isValidName,
+  isValidUrl,
+  isValidYear,
   movies,
   remove,
-  edit
+  edit,
+  update
 }) => {
   return (
     <div className="container mt-5">
@@ -40,7 +46,7 @@ const MovieList = ({
             src={require("../res/add.png")}
             width="80%"
             height="auto"
-            onClick={toggle}
+            onClick={handleBoutonPlus}
           />
         </div>
         <ModalMovie
@@ -55,6 +61,11 @@ const MovieList = ({
           moviedesc={moviedesc}
           moviename={moviename}
           movieyear={movieyear}
+          isValidDescription={isValidDescription}
+          isValidName={isValidName}
+          isValidUrl={isValidUrl}
+          isValidYear={isValidYear}
+          update={update}
         />
       </div>
     </div>

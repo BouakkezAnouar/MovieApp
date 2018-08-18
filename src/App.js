@@ -19,7 +19,11 @@ class App extends Component {
       imgurl: "",
       moviedesc: "",
       update: false,
-      updateId: 0
+      updateId: 0,
+      isValidDescription: false,
+      isValidName: false,
+      isValidUrl: false,
+      isValidYear: false
     };
   }
 
@@ -47,7 +51,39 @@ class App extends Component {
     return movies.reduce((max, el) => (el.id > max ? el.id : max), -1);
   };
 
+  emptyForm = () => {
+    this.setState({
+      moviename: "",
+      moviedesc: "",
+      movieyear: "",
+      imgurl: "",
+      isValidDescription: false,
+      isValidName: false,
+      isValidUrl: false,
+      isValidYear: false
+    });
+  };
+
+  handleBoutonPlus = () => {
+    if (this.state.update === true) {
+      this.setState({ update: false });
+      this.emptyForm();
+    }
+    this.toggle();
+  };
+
   handleAdd = () => {
+    // get the form empty
+
+    if (
+      !this.state.isValidName ||
+      !this.state.isValidUrl ||
+      !this.state.isValidYear ||
+      !this.state.isValidDescription
+    )
+      return;
+    this.emptyForm();
+
     let movies = [...this.state.movies];
     let id =
       this.state.update === true ? this.state.updateId : this.lastId() + 1;
@@ -70,12 +106,7 @@ class App extends Component {
       });
     }
 
-    this.setState({
-      moviename: "",
-      moviedesc: "",
-      movieyear: "",
-      imgurl: ""
-    });
+    this.emptyForm();
 
     //optionnel
     //this.setState({ movies });
@@ -121,9 +152,63 @@ class App extends Component {
       movieyear: movie.annee,
       moviedesc: movie.description,
       update: true,
-      updateId: movie.id
+      updateId: movie.id,
+      isValidDescription: true,
+      isValidName: true,
+      isValidUrl: true,
+      isValidYear: true
     });
     this.toggle();
+  };
+
+  handleMovieDesc = event => {
+    this.setState({ moviedesc: event.target.value.toLowerCase() });
+    let description = event.target.value;
+    if (description.length < 10) {
+      this.setState({ isValidDescription: false });
+    } else this.setState({ isValidDescription: true });
+  };
+
+  handleMovieYear = event => {
+    let year = event.target.value;
+    this.setState({ movieyear: year });
+    if (Number(year) < 1800 || Number(year) > 2019) {
+      this.setState({ isValidYear: false });
+    } else this.setState({ isValidYear: true });
+  };
+
+  handleMovieName = event => {
+    let name = event.target.value;
+    this.setState({ moviename: name });
+    if (name.length < 3 || name.length > 30) {
+      this.setState({ isValidName: false });
+    } else this.setState({ isValidName: true });
+  };
+  /*
+  imageExists(image_url) {
+    var http = new XMLHttpRequest();
+
+    http.open("HEAD", image_url, false);
+    http.send();
+
+    return http.status != 404;
+  }*/
+  checkImage(imageSrc, good, bad) {
+    var img = new Image();
+    img.src = imageSrc;
+    img.onload = good;
+    img.onerror = bad;
+  }
+
+  handleImgUrl = event => {
+    let url = event.target.value;
+    this.setState({ imgurl: url });
+
+    this.checkImage(
+      url,
+      () => this.setState({ isValidUrl: true }),
+      () => this.setState({ isValidUrl: false })
+    );
   };
 
   render() {
@@ -153,20 +238,20 @@ class App extends Component {
           }
           remove={this.remove}
           edit={this.edit}
-          handleImgUrl={event => this.setState({ imgurl: event.target.value })}
-          handleMovieName={event =>
-            this.setState({ moviename: event.target.value })
-          }
-          handleMovieDesc={event =>
-            this.setState({ moviedesc: event.target.value })
-          }
-          handleMovieYear={event =>
-            this.setState({ movieyear: event.target.value })
-          }
+          handleImgUrl={this.handleImgUrl}
+          handleMovieName={this.handleMovieName}
+          handleMovieDesc={this.handleMovieDesc}
+          handleMovieYear={this.handleMovieYear}
+          handleBoutonPlus={this.handleBoutonPlus}
           imgurl={this.state.imgurl}
           moviename={this.state.moviename}
           moviedesc={this.state.moviedesc}
           movieyear={this.state.movieyear}
+          isValidDescription={this.state.isValidDescription}
+          isValidName={this.state.isValidName}
+          isValidUrl={this.state.isValidUrl}
+          isValidYear={this.state.isValidYear}
+          update={this.state.update}
         />
       </React.Fragment>
     );
