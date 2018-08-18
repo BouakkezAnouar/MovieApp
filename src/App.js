@@ -13,7 +13,13 @@ class App extends Component {
       modal: false,
       filter: "",
       ratingFilter: 0,
-      movies: []
+      movies: [],
+      moviename: "",
+      movieyear: "",
+      imgurl: "",
+      moviedesc: "",
+      update: false,
+      updateId: 0
     };
   }
 
@@ -41,15 +47,34 @@ class App extends Component {
     return movies.reduce((max, el) => (el.id > max ? el.id : max), -1);
   };
 
-  handleAdd = (name, year, url, desc) => {
+  handleAdd = () => {
     let movies = [...this.state.movies];
-    movies.push({
-      id: this.lastId() + 1,
-      name: name,
-      annee: year,
-      image: url,
-      rating: 1,
-      description: desc
+    let id =
+      this.state.update === true ? this.state.updateId : this.lastId() + 1;
+    if (this.state.update === true) {
+      let movie = movies.find(movie => movie.id === id);
+      movie.name = this.state.moviename;
+      movie.annee = this.state.movieyear;
+      movie.description = this.state.moviedesc;
+      movie.image = this.state.imgurl;
+
+      this.setState({ update: false });
+    } else {
+      movies.push({
+        id: id,
+        name: this.state.moviename,
+        annee: this.state.movieyear,
+        image: this.state.imgurl,
+        rating: 1,
+        description: this.state.moviedesc
+      });
+    }
+
+    this.setState({
+      moviename: "",
+      moviedesc: "",
+      movieyear: "",
+      imgurl: ""
     });
 
     //optionnel
@@ -90,6 +115,14 @@ class App extends Component {
   };
 
   edit = movie => {
+    this.setState({
+      imgurl: movie.image,
+      moviename: movie.name,
+      movieyear: movie.annee,
+      moviedesc: movie.description,
+      update: true,
+      updateId: movie.id
+    });
     this.toggle();
   };
 
@@ -120,6 +153,20 @@ class App extends Component {
           }
           remove={this.remove}
           edit={this.edit}
+          handleImgUrl={event => this.setState({ imgurl: event.target.value })}
+          handleMovieName={event =>
+            this.setState({ moviename: event.target.value })
+          }
+          handleMovieDesc={event =>
+            this.setState({ moviedesc: event.target.value })
+          }
+          handleMovieYear={event =>
+            this.setState({ movieyear: event.target.value })
+          }
+          imgurl={this.state.imgurl}
+          moviename={this.state.moviename}
+          moviedesc={this.state.moviedesc}
+          movieyear={this.state.movieyear}
         />
       </React.Fragment>
     );

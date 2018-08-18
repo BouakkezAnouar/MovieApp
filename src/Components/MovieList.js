@@ -7,6 +7,14 @@ const MovieList = ({
   toggle,
   modal,
   handleAdd,
+  imgurl,
+  moviedesc,
+  moviename,
+  movieyear,
+  handleImgUrl,
+  handleMovieDesc,
+  handleMovieName,
+  handleMovieYear,
   movies,
   remove,
   edit
@@ -35,7 +43,19 @@ const MovieList = ({
             onClick={toggle}
           />
         </div>
-        <ModalMovie modal={modal} toggle={toggle} handleAdd={handleAdd} />
+        <ModalMovie
+          modal={modal}
+          toggle={toggle}
+          handleAdd={handleAdd}
+          handleImgUrl={handleImgUrl}
+          handleMovieName={handleMovieName}
+          handleMovieDesc={handleMovieDesc}
+          handleMovieYear={handleMovieYear}
+          imgurl={imgurl}
+          moviedesc={moviedesc}
+          moviename={moviename}
+          movieyear={movieyear}
+        />
       </div>
     </div>
   );
