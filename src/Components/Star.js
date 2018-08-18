@@ -2,6 +2,7 @@ import React from "react";
 const Star = ({ empty, onChangeRating }) => {
   return (
     <img
+      className="star"
       style={{ cursor: "pointer" }}
       src={
         empty === true

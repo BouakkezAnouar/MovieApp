@@ -3,7 +3,7 @@ import { FormGroup, Input, Label, Container, Row, Col } from "reactstrap";
 import RatingFilter from "./RatingFilter";
 const Search = ({ onChange, value, onChangeRating, ratingFilter }) => {
   return (
-    <Container className=" mt-3">
+    <div className="container mt-3">
       <Row>
         <Col lg="9" xs="6">
           <FormGroup className="m-auto">
@@ -22,7 +22,7 @@ const Search = ({ onChange, value, onChangeRating, ratingFilter }) => {
           />
         </Col>
       </Row>
-    </Container>
+    </div>
   );
 };
 
