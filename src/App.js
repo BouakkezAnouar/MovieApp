@@ -1,56 +1,33 @@
 import React, { Component } from "react";
 import MovieList from "./Components/MovieList";
 import Search from "./Components/Search";
+import { config } from "./config";
+import * as firebase from "firebase";
 class App extends Component {
-  images = [
-    "https://mdbootstrap.com/img/Mockups/Lightbox/Thumbnail/img%20(67).jpg",
-    "https://mdbootstrap.com/img/Photos/Others/men.jpg",
-    "http://factinteres.ru/wp-content/uploads/2016/09/IMG-Worlds-of-Adventure-1-945x776.jpg",
-    "https://m.kajgana.com/sites/default/files/styles/full_size/public/2016/12/12/images/img-310004.jpg"
-  ];
   constructor(props) {
     super(props);
+    firebase.initializeApp(config);
+    this.moviesRef = firebase.database().ref("movies");
     this.state = {
+      loading: true,
       modal: false,
       filter: "",
       ratingFilter: 0,
-      movies: [
-        {
-          id: 0,
-          name: "spiderman",
-          annee: "2011",
-          rating: 2,
-          image: this.images[0],
-          description: "une good film"
-        },
-        {
-          id: 1,
-          name: "taken",
-          annee: "2013",
-          rating: 3,
-          image: this.images[2],
-
-          description: "une bad film"
-        },
-        {
-          id: 2,
-          name: "need for speed",
-          annee: "2012",
-          rating: 4,
-          image: this.images[3],
-
-          description: "une bad film"
-        },
-        {
-          id: 3,
-          name: "saw",
-          annee: "2011",
-          rating: 1,
-          image: this.images[0],
-          description: "une good film"
-        }
-      ]
+      movies: []
     };
+  }
+
+  componentWillMount() {
+    this.moviesRef.on("value", moviesFirebase => {
+      let movies = moviesFirebase.val();
+      if (movies !== null) {
+        movies = movies.filter(movie => movie !== undefined);
+        this.setState({
+          movies: movies,
+          loading: false
+        });
+      } else this.setState({ movies: [], loading: false });
+    });
   }
 
   toggle = () => {
@@ -61,12 +38,11 @@ class App extends Component {
 
   lastId = () => {
     const movies = [...this.state.movies];
-    return movies.reduce((max, el) => (el.id > max ? el.id : max), 0);
+    return movies.reduce((max, el) => (el.id > max ? el.id : max), -1);
   };
 
   handleAdd = (name, year, url, desc) => {
-    const movies = [...this.state.movies];
-    console.log(movies);
+    let movies = [...this.state.movies];
     movies.push({
       id: this.lastId() + 1,
       name: name,
@@ -75,9 +51,13 @@ class App extends Component {
       rating: 1,
       description: desc
     });
-    console.log(movies);
 
-    this.setState({ movies });
+    //optionnel
+    //this.setState({ movies });
+
+    this.moviesRef.set({ ...movies });
+
+    //this.setState({ movies });
     this.toggle();
   };
 
@@ -89,12 +69,26 @@ class App extends Component {
     );
   };
 
-  onChangeRating = (newRating, index) => {
+  onChangeRating = (newRating, id) => {
     const movies = [...this.state.movies];
-    movies[index].rating = newRating;
+    let movie = movies.find(movie => movie.id === id);
+    movie.rating = newRating;
 
-    this.setState({ movies });
+    //optionnel
+    //this.setState({ movies });
+
+    this.moviesRef.set({ ...movies });
   };
+
+  remove = id => {
+    let movies = [...this.state.movies];
+    movies = movies.filter(movie => movie.id !== id);
+
+    console.log(movies);
+
+    this.moviesRef.set({ ...movies });
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -106,6 +100,11 @@ class App extends Component {
             this.setState({ ratingFilter: newRating })
           }
         />
+        {this.state.loading && (
+          <div className="m-auto text-center">
+            <img className="m-auto" src={require("./res/loading.gif")} />
+          </div>
+        )}
         <MovieList
           filter={this.state.filter}
           movies={this.getFiltredMovies()}
@@ -115,6 +114,7 @@ class App extends Component {
           onChangeRating={(newRating, indexMovie) =>
             this.onChangeRating(newRating, indexMovie)
           }
+          remove={this.remove}
         />
       </React.Fragment>
     );
