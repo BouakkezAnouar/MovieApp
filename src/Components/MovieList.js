@@ -8,7 +8,8 @@ const MovieList = ({
   modal,
   handleAdd,
   movies,
-  remove
+  remove,
+  edit
 }) => {
   return (
     <div className="container mt-5">
@@ -20,6 +21,7 @@ const MovieList = ({
             index={i}
             onChangeRating={onChangeRating}
             remove={() => remove(movie.id)}
+            edit={edit}
           />
         ))}
 

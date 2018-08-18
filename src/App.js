@@ -89,6 +89,10 @@ class App extends Component {
     this.moviesRef.set({ ...movies });
   };
 
+  edit = movie => {
+    this.toggle();
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -115,6 +119,7 @@ class App extends Component {
             this.onChangeRating(newRating, indexMovie)
           }
           remove={this.remove}
+          edit={this.edit}
         />
       </React.Fragment>
     );

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Rating from "./Rating";
 import { Row } from "reactstrap";
-const Movie = ({ movie, remove, index, onChangeRating = () => {} }) => {
+const Movie = ({ movie, remove, edit, index, onChangeRating = () => {} }) => {
   return (
     <div className="col-sm-6 col-lg-3 col-md-4 mb-4">
       <div class="card pb-1">
@@ -24,6 +24,7 @@ const Movie = ({ movie, remove, index, onChangeRating = () => {} }) => {
               <img
                 src={require("../res/edit.png")}
                 style={{ cursor: "pointer" }}
+                onClick={() => edit(movie)}
               />
             </div>
             <div className="col-6">
